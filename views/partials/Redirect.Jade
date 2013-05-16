@@ -1,0 +1,13 @@
+#redirectWrapper.bg-gray.noise.white
+	br
+	br
+	br
+	br
+	br	
+	span {{ sentence }}
+	br
+	br
+	.redirectLink(ng-show="link.show")
+		span if no redirection occurred, please click the link below
+		br
+		a.link(href="{{ link.url }}") click here

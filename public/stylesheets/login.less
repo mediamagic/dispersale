@@ -1,0 +1,33 @@
+@darkGray: #333;
+.login {
+	width: 100%;
+	min-height: 700px;
+	form {
+		::-webkit-input-placeholder { 
+			color:@darkGray; 
+			text-align: center;
+			font-style: italic;
+		}
+		::-moz-placeholder { 
+			color:@darkGray; 
+			text-align: center;
+			font-style: italic;
+		}
+		:-ms-input-placeholder { 
+			color:@darkGray; 
+			text-align: center;
+			font-style: italic;
+		}
+		input:-moz-placeholder { 
+			color:@darkGray; 
+			text-align: center;
+			font-style: italic;
+		}
+		div {
+			input[type="text"], input[type="password"] {
+			}
+			input[type="submit"] {
+			}
+		}
+	}
+}

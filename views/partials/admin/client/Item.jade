@@ -1,0 +1,54 @@
+.page
+	.page-header-content
+		h1 Item
+			small &nbsp;
+
+	.page-region
+		.page-region-content
+			.grid
+				.row
+					.span4(style="width:100%;")
+						h3.padding5.bg-blue.noise(style="height:40px;margin-bottom:10px")
+							i.white.icon-tag
+							span.white Item {{ id }}
+						#item
+							.identifier
+								div identifier
+								input.bg-blue.noise.white(type="text", placeholder="item identifier", ng-model="item.identifier")
+							.name.margin
+								div name
+								input.bg-blue.noise.white(type="text", placeholder="item name", ng-model="item.name")
+							.model.margin
+								div model
+								input.bg-blue.noise.white(type="text", placeholder="item model", ng-model="item.model")
+							.path.margin
+								div item path
+								span {{ shopBaseUrl }}
+									input.bg-blue.noise.white(type="text", placeholder="item path", ng-model="item.path")
+							.coupon.margin
+								div item coupon
+								.discount
+									input.bg-blue.noise.white(type="number", value="1", min="1", max="100", step="1", ng-model="item.coupon.discount")
+									span.percent %
+								.enabled									
+									input#couponEnabled(type="checkbox", ng-model="item.coupon.enabled")									
+									label(for="couponEnabled") enabled
+							.share
+								.title.margin
+									div share title
+									input.bg-blue.noise.white(type="text", placeholder="item share title", ng-model="item.share.title")
+								.description.margin
+									div share description
+									textarea.bg-blue.noise.white(placeholder="item share description", rows="5", ng-model="item.share.description")
+								.image.margin
+									div share image
+									img(ng-src="{{item.share.image.dataUrl}}", width="200", height="200")
+									button.bg-yellow(ng-click="triggerClick('uploadItemImage')", ng-disabled="uploading") Upload Image
+									input#uploadItemImage(type="file", accept="image/*", onchange="angular.element(this).scope().processImage(this.files[0])", style="display:none;")
+							.incentive.margin
+								div incentive amount
+								.amount $
+									input.bg-blue.noise.white(type="number", value="1", min="1", step="1", ng-model="item.incentive.amount")
+									span total including {{ settings.commision }}% commision and {{ settings.tax }}% tax: 
+										b ${{ item.incentive.total }}
+							button.margin.bg-yellow(ng-click="createUpdateItem()", ng-disabled="!formValid") {{ saveUpdateButton }}

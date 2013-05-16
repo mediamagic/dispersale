@@ -1,0 +1,57 @@
+.page
+	.page-header-content
+		h1 Items
+			small &nbsp;
+
+	.page-region
+		.page-region-content
+			.grid
+				.row
+					.span4(style="width:100%;")
+						h3.padding5.bg-blue.noise.margin-bottom(style="height:40px;")
+							i.white.icon-basket
+							span.white Items ({{ items.length }})
+							a(href="#/item")
+								button.bar-button.bg-yellow New Item
+						.paginationWrapper
+							pagination.pagination-centered(boundary-links="true", num-pages="pagination.items.pages", current-page="pagination.items.page", max-size="pagination.items.total", previous-text="«", next-text="»", first-text="««", last-text="»»")
+						table.bg-blue.noise
+							thead
+								tr
+									th.white.bold.center Picture
+									th.white.bold.center ID
+									th.white.bold.center Identifier
+									th.white.bold.center Name									
+									th.white.bold.center Model
+									th.white.bold.center Incentive
+									th.white.bold.center Total Incentive
+									th.white.bold.center Sales
+									th.white.bold.center Status																
+									th.white.bold.center Date Created
+									th.white.bold.center Edit
+							tbody								
+								tr(ng-repeat="item in items | buildImagePath | startFrom:(pagination.items.page - 1)*pagination.items.total | limitTo:pagination.items.total", ui-animate)
+									td.font12.white.center
+										img(width="100", height="100", ng-src="{{ item.image}}")
+									td.font12.white.center {{ item._id }}
+									td.font12.white.center {{ item.identifier }}
+									td.font12.white.center {{ item.name }}
+									td.font12.white.center {{ item.model }}
+									td.font12.white.center ${{ item.incentive }}
+									td.font12.white.center ${{ item | itemCommisionAndTax }}
+									td.font12.white.center {{ item.sales }}
+									td.font12.white.center 
+										#itemStatus
+											label
+												select(style="width:100px;", onchange="angular.element(this).scope().statusChanged(this, '{{ item }}')")
+													option(value="1", ng-selected="item.status == 1") Active
+													option(value="2", ng-selected="item.status == 2") Pending
+													option(value="3", ng-selected="item.status == 3") Disabled
+													option(value="4", ng-selected="item.status == 4", disabled) Inactive																
+									td.font12.white.center {{ getDateById(item._id) | date:'dd/MM/yyyy HH:mm' }}
+									td.font12.white.center 
+										a(href="#/item/{{ item._id}}")
+											i.icon-clipboard-2.white.link
+						.paginationWrapper
+							pagination.pagination-centered(boundary-links="true", num-pages="pagination.items.pages", current-page="pagination.items.page", max-size="pagination.items.total", previous-text="«", next-text="»", first-text="««", last-text="»»")
+

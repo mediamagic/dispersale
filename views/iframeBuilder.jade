@@ -1,0 +1,45 @@
+html5
+	body
+		#fb-root		
+		script
+			window.fbAsyncInit = function() {
+				FB.init({
+					appId      : '188191534668323',
+					channelUrl : '//node.mediamagic.co.il:50050/channel.html',
+					status     : true,
+					xfbml      : true
+				});
+			};
+			(function(d, s, id){
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) {return;}
+				js = d.createElement(s); js.id = id;
+				js.src = "//connect.facebook.net/en_US/all.js";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));
+
+			function shareFB () {
+
+				var postData =  { 
+					method:'feed',									
+					picture: '#{share.image}',					
+					link: 'http://node.mediamagic.co.il:50050/shop/#{sale}',
+					name:'#{share.title}',
+					//caption:encodeURIComponent('http://node.mediamagic.co.il:50050/shop/#{sale}'),					
+					caption:' ',
+					description:'#{share.description}',
+					properties:{ link:'http://node.mediamagic.co.il:50050/shop/#{sale}'},
+					actions:[{ name:'Learn about Dispersale', link:'http://www.dispersale.com'}]
+				}				
+				
+				var postCB = function (response) {
+					if (response && response.post_id) {
+				      console.log('Post was published.');
+				    } else {
+				      console.log('Post was not published.');
+				    }
+
+				}
+				FB.ui(postData, postCB);
+			}
+a(href="javascript:shareFB()") Share!!!

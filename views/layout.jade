@@ -1,0 +1,54 @@
+doctype 5
+html(ng-app="application", ng-controller="GlobalCtrl")
+	head
+		title(ng-bind="settings.title")
+		meta(charset="utf-8", lang="he-IL")
+		meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+		meta(name="viewport", content="width=device-width, user-scalable=no")
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		link(rel='stylesheet', href='/stylesheets/fb-buttons.css')
+	body
+		script
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'XX-XXXXXXXX-X']);
+			_gaq.push(['_setDomainName', 'skoda.co.il']);
+			_gaq.push(['_trackPageview']);
+			(function() {
+				var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			})();			
+		#wrap
+			#header(ui-scrollfix="+20")
+				#fb-root
+				//#nav navigation
+			#wrapper(ng-view)
+		#footer
+			.footer		
+		script(src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js")
+		script(src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap.min.js")
+		script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js")
+		script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular-resource.min.js")
+		script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular-cookies.min.js")
+		script(src="/javascripts/vendor/angular-ui.min.js")
+		script(src="/javascripts/vendor/angular-ui.min.js")
+		script(src="/javascripts/app.min.js?r=#{random }")
+		script			
+			window.fbAsyncInit = function() {
+				FB.init({
+					appId      : '188191534668323',
+					channelUrl : '//node.mediamagic.co.il:50050/channel.html',
+					status     : true,
+					xfbml      : true
+				});
+				try {
+					fbInitialized();
+				} catch(e) {}
+			};
+			(function(d, s, id){
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (d.getElementById(id)) {return;}
+				js = d.createElement(s); js.id = id;
+				js.src = "//connect.facebook.net/en_US/all.js";
+				fjs.parentNode.insertBefore(js, fjs);
+			}(document, 'script', 'facebook-jssdk'));

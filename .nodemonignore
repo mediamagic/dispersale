@@ -1,0 +1,4 @@
+# ignore the static directory
+/public/*
+*.css
+*.min.js

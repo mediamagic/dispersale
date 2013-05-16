@@ -1,0 +1,47 @@
+doctype 5
+html(ng-app="admin.client", ng-controller="GlobalCtrl")
+	head
+		meta(name="viewport",content="width=device-width, initial-scale=1.0")
+		title(ng-bind="settings.title") loading...
+		link(rel="stylesheet", href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&amp;lang=en")
+		link(rel='stylesheet', href='/stylesheets/modern.css')
+		link(rel='stylesheet', href='/stylesheets/modern-responsive.css')
+		link(rel='stylesheet', href='/stylesheets/admin.css')		
+		script(src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js")
+		script(src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js")
+		script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js")
+		script(src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular-resource.min.js")
+		script(src="//code.angularjs.org/1.0.5/angular-cookies.min.js")
+		script(src="/javascripts/vendor/angular-ui.js")
+		script(src="/javascripts/vendor/bootstrap-ui/ui-bootstrap-tpls-0.2.0.js")
+		script(src="/javascripts/app.admin.client.min.js")	
+	body.modern-ui
+		.page
+			.nav-bar
+				.nav-bar-inner.padding10.bg-gray.noise
+					span.pull-menu(ng-click="showMenu = !showMenu")
+					a(href="#/main")
+						span.element.brand Dispersale
+					span.divider
+					ul.menu(ng-hide="!showMenu")
+						li					
+							a.navigation-text(href="#/main")
+								i(ng-class="{ yellow: location.path() == '/main'}").icon-home
+								span(ng-class="{ yellow: location.path() == '/main'}") Home
+						li					
+							a.navigation-text(href="#/items")
+								i(ng-class="{ yellow: location.path() == '/items' || location.path().indexOf('/item') == 0}").icon-basket
+								span(ng-class="{ yellow: location.path() == '/items' || location.path().indexOf('/item') == 0}") Items
+						li					
+							a.navigation-text(href="#/sales")
+								i(ng-class="{ yellow: location.path() == '/sales'}").icon-cart
+								span(ng-class="{ yellow: location.path() == '/sales'}") Sales
+						li
+							a.navigation-text(href="/", target="_blank")
+								i.icon-new-tab-2
+								span  Go to App
+						li
+							a.navigation-text(href="/logout")
+								i.icon-exit
+								span  logout
+		#wrapper(ng-view)

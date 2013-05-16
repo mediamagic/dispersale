@@ -1,0 +1,34 @@
+{
+  "name": "mmSeed",
+  "version": "0.9.1",
+  "private": true,
+  "description": "opinionated seed for building angular apps with REST and build tools",
+  "keywords": [
+    "angular",
+    "mongodb",
+    "express"
+  ],
+  "script": {
+    "start": "node app"
+  },
+  "author": {
+    "name": "Benny Cohen",
+    "email": "benny@mediamagic.co.il"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mediamagic/seed_build"
+  },
+  "dependencies": {
+    "express": "3.0.3",
+    "jade": "*",
+    "less-middleware": "*",
+    "async": "0.2.x",
+    "connect-assetmanager":"0.0.28",
+    "connect-memcached":"0.0.3",
+    "csv":"0.2.6",
+    "mongoose":"3.4.0",
+    "passport":"0.1.16",
+    "passport-local":"0.1.6"
+  }
+}
