@@ -82,10 +82,22 @@ app.configure('production', function(){
 });
 
 //MIDDLEWARE
-function ensureAuthenticated(req, res, next){  
-  if (req.isAuthenticated()) { return next() }
+function ensureAuthenticated(req, res, next){    
+  if (req.isAuthenticated()) { 
+    
+    // if(req.route.path.indexOf('client') > -1 && req.user[0].level == 1) {   
+    //   req.logout() 
+    //   res.redirect('/#/login/client');
+    // } else if(req.route.path.indexOf('user') > -1 && req.user[0].level == 2) {
+    //   req.logout()
+    //   res.redirect('/#/login/user')
+    // } else {
+    //   return next()
+    // }
+       return next() 
+  }
 
-  if(req.route.path.indexOf('client') > -1) {
+  if(req.route.path.indexOf('client') > -1) {    
     res.redirect('/#/login/client');
   } else if(req.route.path.indexOf('user') > -1) {
     res.redirect('/#/login/user')
@@ -100,11 +112,12 @@ require('./models')(function(resp){
       , Api         = require('./controllers/api')(resp)
       , Images      = require('./controllers/images')(resp)
       , Items       = require('./controllers/items')(resp)
-      , Sales       = require('./controllers/sales')(resp)  
+      , Sales       = require('./controllers/sales')(resp) 
+      , Incentives  = require('./controllers/incentives')(resp) 
       , Domain      = require('./controllers/domain')(resp)
       , Dispersale  = require('./controllers/dispersale')(resp)
       , Tokens      = require('./controllers/tokens')(resp)
-      , Facebook      = require('./controllers/facebook')(resp)
+      , Facebook    = require('./controllers/facebook')(resp)
 
   pass.use(new LocalS(
     function(username, password, done){
@@ -174,9 +187,27 @@ require('./models')(function(resp){
 
   //API
   app.post('/api/login', pass.authenticate('local'), function(req,res) {  	
-    if (req.user) res.json({error:0})
+    if (req.user) {
+      res.json({error:0})
+    }
     else res.send(401)
   })
+
+  app.post('/api/login/user', function(req,res) {    
+    resp.powerUsers.findOne({'facebook.id':req.body.uid}, function(err, user) {
+      if(err)
+        return res.send({ error:1, message:err});
+
+      if(user) {
+        req.session.passport.user = user._id;
+        req.user = user;      
+
+        return res.send(user);
+      } else {
+        return res.send({ error:1, message:'user not found'});
+      }
+    });    
+  });
 
   app.get ('/api/uploads/images', ensureAuthenticated, Images.index);
   app.post('/api/uploads/images', ensureAuthenticated, Images.create);
@@ -189,6 +220,7 @@ require('./models')(function(resp){
   app.get('/resources/sales', ensureAuthenticated, Sales.index);
   app.put('/resources/sales/:id', Sales.load, Sales.update); // i dont user ensureAuthenticated couse when a user is updating sale status to allow posts he is not logged in, need to create new route in the future
   app.post('/resources/sales/:id/close', ensureAuthenticated, Sales.close);
+  app.get('/resources/incentives', ensureAuthenticated, Incentives.index);
 
   // Dispersale JS
   app.get('/resources/dispersale-latest.js', Domain.validate, Dispersale.loadJS);

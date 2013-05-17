@@ -29,13 +29,13 @@ html(ng-app="admin.user", ng-controller="GlobalCtrl")
 								i(ng-class="{ yellow: location.path() == '/main'}").icon-home
 								span(ng-class="{ yellow: location.path() == '/main'}") Home
 						li					
-							a.navigation-text(href="#/items")
-								i(ng-class="{ yellow: location.path() == '/items' || location.path().indexOf('/item') == 0}").icon-basket
-								span(ng-class="{ yellow: location.path() == '/items' || location.path().indexOf('/item') == 0}") Items
-						li					
 							a.navigation-text(href="#/sales")
 								i(ng-class="{ yellow: location.path() == '/sales'}").icon-cart
 								span(ng-class="{ yellow: location.path() == '/sales'}") Sales
+						li					
+							a.navigation-text(href="#/incentives")
+								i(ng-class="{ yellow: location.path() == '/incentives'}").icon-gift-2
+								span(ng-class="{ yellow: location.path() == '/incentives'}") Incentives
 						li
 							a.navigation-text(href="/", target="_blank")
 								i.icon-new-tab-2

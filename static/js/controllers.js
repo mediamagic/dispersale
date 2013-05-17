@@ -10,7 +10,10 @@ var GlobalCtrl= [ '$scope', '$resource', '$location', '$window', '$cookies', '$h
     $scope.route = $routeParams;
 
     $scope.Redirect 		= $scope.resource('/api/redirect/:sale', {_csrf: $cookies['csrf.token']});
-    $scope.Login 			= $scope.resource( '/api/login', {}, {login: {method: 'post', headers: {"X-CSRF-Token": $cookies['csrf.token']}}} );
+    $scope.Login 			= {
+    							client: $scope.resource( '/api/login', {}, {login: {method: 'post', headers: {"X-CSRF-Token": $cookies['csrf.token']}}}),
+    							user:$scope.resource( '/api/login/user', {}, {login: {method: 'post', headers: {"X-CSRF-Token": $cookies['csrf.token']}}}),
+    						  }
     $scope.Sales 			= $resource('/resources/sales/:id', {_csrf: $cookies['csrf.token']}, {update: {method:'PUT'}});    
 
     $scope.Facebook = {
@@ -40,6 +43,20 @@ var GlobalCtrl= [ '$scope', '$resource', '$location', '$window', '$cookies', '$h
 	$scope.$on('$viewContentLoaded', function() {
 	    $scope.viewLoaded = true;
 	});
+
+	$scope.buttons = {
+		facebook: {
+			text:'',
+			show:false
+		}
+	}
+
+	$scope.changeFacebookButton = function(text, show) {		
+		$scope.safeApply(function() {	
+			$scope.buttons.facebook.text = text;
+	    	$scope.buttons.facebook.show = show;
+		});		
+	}
 }];
 
 var fbInitialized = null;
@@ -114,13 +131,6 @@ var UserLoginCtrl = ['$scope', function ( $scope ) {
 		updated:false
 	}
 
-	$scope.buttons = {
-		facebook: {
-			text:'',
-			show:false
-		}
-	}
-
 	$scope.$on('FB_INITIALIZED', function() {
 
 		FB.getLoginStatus(function(response) {				
@@ -159,13 +169,6 @@ var UserLoginCtrl = ['$scope', function ( $scope ) {
 				});
 			}
 		});
-	}
-
-	$scope.changeFacebookButton = function(text, show) {		
-		$scope.safeApply(function() {	
-			$scope.buttons.facebook.text = text;
-	    	$scope.buttons.facebook.show = show;
-		});		
 	}
 
 	$scope.facebookConnect = function() {
@@ -220,9 +223,46 @@ var LoginClientCtrl = ['$scope', '$window', '$http', '$cookies' , function ( $sc
 }];
 
 var LoginUserCtrl = ['$scope', '$window', '$http', '$cookies' , function ( $scope, $window, $http, $cookies ){	
-	$scope.loginSubmit = function (){	
-		$window.location.href = '/api/login/facebook';	
+	// $scope.loginSubmit = function (){	
+	// 	$window.location.href = '/api/login/facebook';	
+	// }
+	$scope.$on('FB_INITIALIZED', function() {
+
+		FB.getLoginStatus(function(response) {				
+		  if (response.status === 'connected') {		    
+		    $scope.changeFacebookButton('Login With Facebook', true);	    	    
+		  } else if (response.status === 'not_authorized') {
+		    $scope.changeFacebookButton('Create Account With Facebook', true);
+		  } else {		    
+		    $scope.changeFacebookButton('Login To Facebook', true);
+		  }
+		 });
+	});
+
+	$scope.facebookConnect = function() {
+		 
+		FB.login(function(response) {
+									
+			if (response.authResponse) {		     
+				
+				var access_token = response.authResponse.accessToken;
+				
+				FB.api('/me', function(response) {			 	
+					
+					response.access_token = access_token;					
+					
+					$scope.Facebook.Users.save({}, response, function(user) {																		
+						$scope.Login.user.login({ uid:response.id}, function(res) {
+							if(!res.error && res._id) {
+								window.location.href = '/admin/user';
+							}
+						})					
+					});
+				});
+			} else {
+				console.log('User cancelled login or did not fully authorize.');
+			}
+		}, {scope: 'email,publish_actions'});				
 	}
 
-	
 }];

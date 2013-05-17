@@ -1,0 +1,37 @@
+.page
+	.page-header-content
+		h1 Sales
+			small &nbsp;
+
+	.page-region
+		.page-region-content
+			.grid
+				.row
+					.span4(style="width:100%;")
+						h3.padding5.bg-color-green.noise.margin-bottom(style="height:40px;")
+							i.white.icon-cart
+							span.white Sales ({{ sales.length }})
+						.paginationWrapper
+							pagination.pagination-centered(boundary-links="true", num-pages="pagination.sales.pages", current-page="pagination.sales.page", max-size="pagination.sales.total", previous-text="«", next-text="»", first-text="««", last-text="»»")
+						table.bg-color-green.noise
+							thead
+								tr									
+									th.white.bold.center ID
+									th.white.bold.center Item
+									th.white.bold.center Transaction																		
+									th.white.bold.center Incentive
+									th.white.bold.center Total Incentive									
+									th.white.bold.center Status
+									th.white.bold.center Date Created									
+							tbody								
+								tr(ng-repeat="sale in sales | startFrom:(pagination.sales.page - 1)*pagination.sales.total | limitTo:pagination.sales.total", ui-animate)									
+									td.font12.white.center {{ sale._id }}
+									td.font12.white.center {{ sale.item }}
+									td.font12.white.center {{ sale.transaction }}									
+									td.font12.white.center ${{ sale.incentive.amount }}
+									td.font12.white.center ${{ sale.incentive.total }}									
+									td.font12.white.center {{ sale | saleStatus }}										
+									td.font12.white.center {{ getDateById(sale._id) | date:'dd/MM/yyyy HH:mm' }}
+						.paginationWrapper
+							pagination.pagination-centered(boundary-links="true", num-pages="pagination.sales.pages", current-page="pagination.sales.page", max-size="pagination.sales.total", previous-text="«", next-text="»", first-text="««", last-text="»»")
+

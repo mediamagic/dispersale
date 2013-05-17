@@ -1,4 +1,2 @@
-.login
-	span user login
-	br
-	input(type="submit", value="Log in",  ng-click="loginSubmit()")
+#login.bg-grey.noise
+	button.uibutton.confirm(ng-click="facebookConnect()", ng-show="buttons.facebook.show") {{ buttons.facebook.text }}

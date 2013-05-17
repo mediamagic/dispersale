@@ -1,0 +1,35 @@
+.page
+	.page-header-content
+		h1 Incentives
+			small &nbsp;
+
+	.page-region
+		.page-region-content
+			.grid
+				.row
+					.span4(style="width:100%;")
+						h3.padding5.bg-color-blue.noise.margin-bottom(style="height:40px;")
+							i.white.icon-gift-2
+							span.white Incentives ({{ incentives.length }})
+						.paginationWrapper
+							pagination.pagination-centered(boundary-links="true", num-pages="pagination.incentives.pages", current-page="pagination.incentives.page", max-size="pagination.incentives.total", previous-text="«", next-text="»", first-text="««", last-text="»»")
+						table.bg-color-blue.noise
+							thead
+								tr									
+									th.white.bold.center ID
+									th.white.bold.center Sale
+									th.white.bold.center Item									
+									th.white.bold.center Incentive													
+									th.white.bold.center Status
+									th.white.bold.center Date Created									
+							tbody								
+								tr(ng-repeat="incentive in incentives | startFrom:(pagination.incentives.page - 1)*pagination.incentives.total | limitTo:pagination.incentives.total", ui-animate)									
+									td.font12.white.center {{ incentive._id }}
+									td.font12.white.center {{ incentive.sale }}
+									td.font12.white.center {{ incentive.item }}									
+									td.font12.white.center ${{ incentive.incentive.amount }}																	
+									td.font12.white.center {{ incentive | incentiveStatus }}										
+									td.font12.white.center {{ getDateById(incentive._id) | date:'dd/MM/yyyy HH:mm' }}
+						.paginationWrapper
+							pagination.pagination-centered(boundary-links="true", num-pages="pagination.incentives.pages", current-page="pagination.incentives.page", max-size="pagination.incentives.total", previous-text="«", next-text="»", first-text="««", last-text="»»")
+

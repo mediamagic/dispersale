@@ -298,7 +298,7 @@ var ItemCtrl = ['$scope', function($scope){
 var SalesCtrl = ['$scope', '$filter', function($scope, $filter){	
 	$scope.sales = [];
 
-	$scope.Sales.query({}, function(res) {		
+	$scope.Sales.query({type:'client'}, function(res) {		
 		$scope.sales = $filter('orderBy')(res, '-_id');
 	});
 

@@ -5,10 +5,20 @@ module.exports = function(db){
 		return doc;
 	}
 	return {
-		index: function(req,res,next){			
-			db.Sales.list({client:req.session.passport.user}, function(err,doc){
-				res.send(handle(err,doc));
-			});
+		index: function(req,res,next){	
+			var type = req.query.type;
+			
+			if(type == 'client') {
+				db.Sales.list({client:req.session.passport.user}, function(err,doc){
+					res.send(handle(err,doc));
+				});
+			} else if(type == 'user') {
+				db.Sales.list({user:req.session.passport.user}, function(err,doc){
+					res.send(handle(err,doc));
+				});
+			} else {
+				res.send(res.send(handle(err,{})))
+			}
 		},
 		load: function(req, res, next) {					
 			db.Sales.get({_id:req.params.id}, function(err,doc){							
