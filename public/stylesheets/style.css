@@ -15,6 +15,7 @@ pre{white-space:pre-wrap;word-wrap:break-word;}
 .white{color:#fff;}
 .bg-gray{background-color:#494841;}
 #login{position:relative;margin:0 auto;margin-top:15%;width:300px;height:150px;text-align:center;border-radius:15px;padding-top:10px;}
+#error{position:relative;margin:0 auto;margin-top:15%;width:300px;height:100px;text-align:center;border-radius:15px;padding-top:40px;border:solid red 10px;}
 @media (max-width:767px){html,body{max-width:767px;}}@media (min-width:768px) and (max-width:1019px){html,body{max-width:1020px;min-width:768px;}}@media (min-width:1020px){}.login{width:100%;min-height:700px;}.login form ::-webkit-input-placeholder{color:#333333;text-align:center;font-style:italic;}
 .login form ::-moz-placeholder{color:#333333;text-align:center;font-style:italic;}
 .login form :-ms-input-placeholder{color:#333333;text-align:center;font-style:italic;}

@@ -83,24 +83,26 @@ app.configure('production', function(){
 
 //MIDDLEWARE
 function ensureAuthenticated(req, res, next){    
-  if (req.isAuthenticated()) { 
-    
-    // if(req.route.path.indexOf('client') > -1 && req.user[0].level == 1) {   
-    //   req.logout() 
-    //   res.redirect('/#/login/client');
-    // } else if(req.route.path.indexOf('user') > -1 && req.user[0].level == 2) {
-    //   req.logout()
-    //   res.redirect('/#/login/user')
-    // } else {
-    //   return next()
-    // }
-       return next() 
-  }
+  if (req.isAuthenticated()) return next() 
 
   if(req.route.path.indexOf('client') > -1) {    
     res.redirect('/#/login/client');
   } else if(req.route.path.indexOf('user') > -1) {
     res.redirect('/#/login/user')
+  }
+}
+
+function ensureLevel(level){    
+  return function(req, res, next) {
+    if(req.user[0].level == level)
+      return next();
+    req.logout();
+
+    if(level == 1)
+      return res.redirect('/#/login/user');
+
+    if(level == 2)
+      return res.redirect('/#/login/client');    
   }
 }
 
@@ -176,10 +178,10 @@ require('./models')(function(resp){
   //VIEWS
   app.get ('/', routes.regular.index)
   app.get ('/views/:view.html', routes.regular.views)
-  app.get ('/views/admin/client/:view.html', ensureAuthenticated, routes.admin.client.views)
-  app.get ('/admin/client*', ensureAuthenticated, routes.admin.client.index)
-  app.get ('/views/admin/user/:view.html', ensureAuthenticated, routes.admin.user.views)
-  app.get ('/admin/user*', ensureAuthenticated, routes.admin.user.index)
+  app.get ('/views/admin/client/:view.html', ensureAuthenticated, ensureLevel(2), routes.admin.client.views)
+  app.get ('/admin/client*', ensureAuthenticated, ensureLevel(2), routes.admin.client.index)
+  app.get ('/views/admin/user/:view.html', ensureAuthenticated, ensureLevel(1), routes.admin.user.views)
+  app.get ('/admin/user*', ensureAuthenticated, ensureLevel(1),routes.admin.user.index)
   app.get ('/logout', function(req,res){
     req.logout()
     res.redirect('/')
@@ -225,8 +227,32 @@ require('./models')(function(resp){
   // Dispersale JS
   app.get('/resources/dispersale-latest.js', Domain.validate, Dispersale.loadJS);
 
+  app.get('/getItemByIdentifier', Domain.validate, function(req, res, next) {
+
+    var client = Tokens.decode(req.query.key);
+
+    if(req.query.identifier && client) {
+      resp.Items.findOne({ identifier:req.query.identifier, client:client}, function(err, item) {
+        if(err)
+          return res.send({error:1, message:err});
+
+        if(item) {
+          return res.send({error:0, item:item._id});
+        } else {
+          return res.send({error:1, message:'item not found'});
+        }
+      });
+    } else {
+      return res.send({ error:1, message:'not identifer sent'})
+    }
+
+  });
+
   //TEMP!!! REMOVE
   app.get('/genClient/:id', function(req, res, next) {
+    res.send(new Buffer(JSON.stringify(req.params.id)).toString('base64'));
+  });
+  app.get('/genSale/:id', function(req, res, next) {
     res.send(new Buffer(JSON.stringify(req.params.id)).toString('base64'));
   });
   //
@@ -381,8 +407,92 @@ require('./models')(function(resp){
       });
   } 
 
-  app.get('/api/redirect/:sale', function(req, res, next) {
+  app.get('/shop/:saleEncoded', function(req, res, next) {
+    var saleId = null;
 
+    try {
+      saleId = Tokens.decode(req.params.saleEncoded);
+    } catch(e) {}
+
+    if(saleId) {
+        resp.Sales.findOne({ _id:saleId}, {}, {}, function(err, doc_sale) {
+          if(!doc_sale) 
+            return res.redirect('/#/error/' + Tokens.encode({error:1, message:'sale not found'}));
+
+          if(doc_sale.status == 1) {
+            var sale = {
+              id:saleId,
+              item: {
+                id:doc_sale.item
+              },
+              client: {
+                id:doc_sale.client
+              }
+            }
+
+            resp.powerUsers.findOne({ _id:sale.client.id}, {}, {}, function(err, doc_client) {
+              if(!doc_client) 
+                return res.redirect('/#/error/' + Tokens.encode({error:1, message:'client not found for this sale'}));
+
+              if(doc_client.status == 1) {
+                
+                sale.client.shopBaseUrl = doc_client.shopBaseUrl;
+
+                resp.Items.findOne({ _id:sale.item.id}, {}, {}, function(err, doc_item) {
+                  if(!doc_item) 
+                    return res.redirect('/#/error/' + Tokens.encode({error:1, message:'item not found for this sale'}));
+
+                  if(doc_item.status == 1) {
+
+                    sale.item.path = doc_item.path;
+                    
+                    var encodedToken = Tokens.generate({
+                      csrf:req.session._csrf,
+                      sale:sale.id,
+                      item:sale.item.id,
+                      client:sale.client.id,
+                      user:req.session.passport.user,
+                      action:'redirect',
+                      ip:req.connection.remoteAddress,
+                      referer:req.headers.referer
+                    });
+                    
+                    if(sale.item.path.indexOf('?') > -1) {
+                      sale.item.path += '&drt=' + encodedToken;
+                    } else {
+                      sale.item.path += '?drt=' + encodedToken;
+                    }
+
+                    sale.client.shopBaseUrl += sale.item.path;
+
+                    validateSiteCode(sale.client.shopBaseUrl, 'http://node.mediamagic.co.il:50050/resources/dispersale-latest.js', function(valid) {                      
+                      if(valid) {                        
+                        return res.redirect(sale.client.shopBaseUrl);
+                      } else {                        
+                        return res.redirect('/#/error/' + Tokens.encode({error:1, message:'site dont have CDN js in code! (or site is down)'}));
+                      }
+                    });
+
+                  } else {                    
+                    return res.redirect('/#/error/' + Tokens.encode({error:1, message:'failed on item status (' + doc_item.status + ')'}));
+                  }
+
+                });
+
+              } else {                
+                return res.redirect('/#/error/' + Tokens.encode({error:1, message:'failed on client status (' + doc_client.status + ')'}));
+              }
+            });
+          } else {            
+            return res.redirect('/#/error/' + Tokens.encode({error:1, message:'failed on sale status (' + doc_sale.status + ')'}));
+          }
+        });
+    } else {
+      return res.redirect('/#/error/' + Tokens.encode({error:1, message:'invalid sale'}));
+    }
+  });
+
+  app.get('/api/redirect/:sale', function(req, res, next) {
     resp.Sales.findOne({ _id:req.params.sale}, {}, {}, function(err, doc_sale) {
       if(!doc_sale) 
         return res.send(404);

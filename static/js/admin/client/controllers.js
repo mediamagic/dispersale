@@ -169,8 +169,8 @@ var ItemCtrl = ['$scope', function($scope){
 			n.incentive.amount = 1;
 
 		$scope.updateTotalIncentive(n.incentive.amount);
-
-		if(n.identifier && n.identifier.length > 2) {
+		
+		if(n.identifier && n.identifier.length > 0) {
 			if(n.name && n.name.length > 2) {
 				if(n.model && n.model.length > 0) {
 					if(n.path && n.path.length > 2) {

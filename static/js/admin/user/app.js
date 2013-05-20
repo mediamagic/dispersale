@@ -4,7 +4,7 @@ config(['$routeProvider', '$locationProvider', function($routeProvider, $locatio
 	$routeProvider.
 		when('/main', {templateUrl: '/views/admin/user/Main.html', controller: MainCtrl, name:'Main'}).		
 		when('/sales', {templateUrl: '/views/admin/user/Sales.html', controller: SalesCtrl, name:'Sales'}).
-    when('/incentives', {templateUrl: '/views/admin/user/Incentives.html', controller: IncentivesCtrl, name:'Incentives'}).
+    when('/incentives', {templateUrl: '/views/admin/user/Incentives.html', controller: IncentivesCtrl, name:'Incentives'}).    
 		otherwise({redirectTo: '/main'});
 }])
 .filter('status', function() {
